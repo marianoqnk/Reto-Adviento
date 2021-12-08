@@ -45,6 +45,18 @@ int leeDatos()
 	return counter;
 }
 
+/*  			number	len	sements		|		len number      |     For len=5	    |	For len=6
+	aaaa		0		6	abcefg		|		2	1	cf		|	2 a cde g		|	0 abc efg
+	b  c		1		2	cf			|		3	7	acf		|	3 a cd fg		|	6 ab defg
+	b  c		2		5	acdeg		|		4	4	bcdf	|	5 ab d fg		|	9 abcd fg
+	dddd		3		5	acdfg		|		5	2,3,5		|	Contain cf=3	|	No Contain c=6
+	e  f		4		4	bcdf		|		6	0,6,9		|	Contain bd=5	|	Contain bd=9
+	e  f		5		5	abdfg		|		7	8			|	Other      2	|	Other 0
+	gggg		6		6	abdefg		|	
+				7		3	acf
+				8		7	abcdefg
+				9		6	abcdfg 																			*/
+
 int main()
 {
 	printf("Starting...\n");
@@ -62,6 +74,7 @@ int main()
 	printf("The numbers times:%i\n", veces);
 
 	//______________PART 2________________________"
+	cout<<"Part two"<<'\n';
 	veces = 0;
 	long suma = 0;
 	//Process all value codes
