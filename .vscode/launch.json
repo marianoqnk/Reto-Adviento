@@ -15,7 +15,7 @@
             "environment": [],
             "externalConsole": true,
             "MIMode": "gdb",
-            "miDebuggerPath": "C:\\MinGW\\bin\\gdb.exe",
+            "miDebuggerPath": "C:\\MinGW64\\bin\\gdb.exe",
             "setupCommands": [
                 {
                     "description": "Habilitar la impresión con sangría para gdb",
@@ -28,7 +28,7 @@
                     "ignoreFailures": true
                 }
             ],
-            "preLaunchTask": "C/C++: g++.exe compilar archivo activo"
+            "preLaunchTask": "C/C++: g++.exe compilar archivo activo ver(1)"
         }
     ]
 }
