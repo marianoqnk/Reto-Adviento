@@ -5,7 +5,7 @@
 #include <fstream>
 using namespace std;
 char *all[100];
-
+char marcados[100][100];
 int counter = 0;
 int leeDatos()
 {
@@ -91,6 +91,34 @@ long buscaMinimos()
 
     return suma;
 };
+
+long compruebaAltura(int x,int y)
+{
+    int misMarcados=0;
+    //comprobar limites para que no se salgo 0 100 
+    if(marcados[x+1][y]==0 && all[x+1][y]!='9' && all[x+1][y]>all[x][y] ) 
+    {
+        misMarcados++;
+        misMarcados+=compruebaAltura(x+1,y);
+    };
+    if(marcados[x-1][y]==0) 
+    {
+        misMarcados++;
+        misMarcados+=compruebaAltura(x-1,y);
+    };
+    if(marcados[x][y+1]==0) 
+    {
+        misMarcados++;
+        misMarcados+=compruebaAltura(x+1,y);
+    };
+    if(marcados[x][y-1]==0) 
+    {
+        misMarcados++;
+        misMarcados+=compruebaAltura(x+1,y);
+    };
+ 
+    return misMarcados;
+}
 int main()
 {
     printf("Starting...\n");
