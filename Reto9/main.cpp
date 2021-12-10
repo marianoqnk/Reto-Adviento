@@ -23,36 +23,33 @@ int leeDatos()
         strcpy(in, pch);
         all[counter++] = in;
     } while (!fe.eof());
-    /* for (auto cadena : all)
+    /*// Test data input 
+    for (auto cadena : all)
          cout << cadena << '\n';*/
     return counter;
 }
 long compruebaAltura(int x, int y)
 {
     long misMarcados = 0;
-    // comprobar limites para que no se salgo 0 100
     marcados[x][y] = 1;
     if (y < 99 && marcados[x][y + 1] == 0 && all[x][y + 1] != '9' && all[x][y + 1] > all[x][y])
     {
-        //marcados[x][y] = 1;
         misMarcados++;
-        misMarcados += compruebaAltura(x, y+1);
+        misMarcados += compruebaAltura(x, y + 1);
     };
     if (y > 0 && marcados[x][y - 1] == 0 && all[x][y - 1] != '9' && all[x][y - 1] > all[x][y])
     {
-        //marcados[x][y] = 1;
+
         misMarcados++;
-        misMarcados += compruebaAltura(x, y-1);
+        misMarcados += compruebaAltura(x, y - 1);
     };
     if (x < 99 && marcados[x + 1][y] == 0 && all[x + 1][y] != '9' && all[x + 1][y] > all[x][y])
     {
-        //marcados[x][y] = 1;
         misMarcados++;
         misMarcados += compruebaAltura(x + 1, y);
     };
     if (x > 0 && marcados[x - 1][y] == 0 && all[x - 1][y] != '9' && all[x - 1][y] > all[x][y])
     {
-        //marcados[x][y] = 1;
         misMarcados++;
         misMarcados += compruebaAltura(x - 1, y);
     };
@@ -62,82 +59,54 @@ long compruebaAltura(int x, int y)
 
 long buscaMinimos()
 {
-    long suma = 0, suma2 = 0;
-    int n = 0, valor, valor2;
+    long suma = 0;
+    int n = 0, valor;
     for (n = 0; n < counter; n++)
     {
-        /*if (n > 0)
-            cout << all[n - 1] << '\n';
-        cout << all[n] << '\n';
-        if (n < counter - 1)
-            cout << all[n + 1] << '\n';*/
         for (int k = 0; k < 100; k++)
         {
-            /*if ((k==99?1:all[n][k] < all[n][k + 1]) && (k == 0 ? 1 : all[n][k] < all[n][k - 1]) &&
-                (n == counter - 1 ? 1 : all[n][k] < all[n + 1][k]) && (n == 0 ? 1 : all[n][k] < all[n - 1][k]))
-            {
 
-                valor2 = all[n][k] - 48 + 1;
-                suma2 += valor2;
-            }*/
-
-            bool min = false;
-            if (k > 0) // compara con anterior
-                if (all[n][k] < all[n][k - 1])
-                    min = false;
-                else
+            if (k > 0) // search left
+                if (!(all[n][k] < all[n][k - 1]))
                     continue;
-            if (k < counter - 1) // compara con siguiente
-                if (all[n][k] < all[n][k + 1])
-                    min = false;
-                else
+            if (k < counter - 1) // search right
+                if (!(all[n][k] < all[n][k + 1]))
                     continue;
-            if (n > 0) // compara con anterior
-                if (all[n][k] < all[n - 1][k])
-                    min = false;
-                else
+            if (n > 0) // search down
+                if (!(all[n][k] < all[n - 1][k]))
                     continue;
-            if (n < 99) // compara con siguiente
-                if (all[n][k] < all[n + 1][k])
-                    min = false;
-                else
+            if (n < 99) // search up
+                if (!(all[n][k] < all[n + 1][k]))
                     continue;
-            min = false;
-            valor = all[n][k] - 48 + 1;
+            valor = all[n][k] - '0' + 1;
             suma += valor;
 
-            if (1)
+            long valleSize = 0;
+            valleSize = compruebaAltura(n, k) + 1;
+            if (valleSize > maxValle[2])
             {
-                long valleSize = 0;
-                valleSize = compruebaAltura(n, k)+1;
-                if(valleSize>maxValle[2])
+                maxValle[2] = valleSize;
+                if (valleSize > maxValle[1])
                 {
-                    maxValle[2]=valleSize;
-                    if(valleSize>maxValle[1])
+                    maxValle[2] = maxValle[1];
+                    maxValle[1] = valleSize;
+                    if (valleSize > maxValle[0])
                     {
-                        maxValle[2]=maxValle[1];
-                        maxValle[1]=valleSize;
-                        if(valleSize>maxValle[0])
-                        {
-                           maxValle[1]=maxValle[0];
-                        maxValle[0]=valleSize; 
-                        }
+                        maxValle[1] = maxValle[0];
+                        maxValle[0] = valleSize;
                     }
                 }
-                /*if (n > 0)
-                    cout << all[n - 1] << '\n';
-                cout << all[n] << '\n';
-                if (n < counter - 1)
-                    cout << all[n + 1] << '\n';
-
-                printf("pos %i,%i minimo %i\n", n, k, valor);
-                // printf("2-pos %i,%i minimo %i\n", n, k, valor2);
-                cout << "suma: " << suma << "Tamaño: " << valleSize << '\n';*/
-                cout<<"tamano: "<<valleSize<<'\n';
-                // suma2=suma;
             }
+            /*if (n > 0)
+                cout << all[n - 1] << '\n';
+            cout << all[n] << '\n';
+            if (n < counter - 1)
+                cout << all[n + 1] << '\n';
+
+            printf("pos %i,%i minimo %i\n", n, k, valor);
+            cout << "suma: " << suma << "Tamaño: " << valleSize << '\n';*/
         }
-        //cout << "linea: " << n << " suma: " << suma << " suma2: " << suma2 << '\n';
+        // cout << "linea: " << n << " suma: " << suma << '\n';
     }
 
     return suma;
@@ -147,10 +116,10 @@ int main()
 {
     printf("Starting...\n");
     leeDatos();
-    buscaMinimos();
-    cout<<"Tres mayores valles:"<<maxValle[0]<<','<<maxValle[1]<<','<<maxValle[2]<<'\n';
-    cout<<"producto:"<<maxValle[0]*maxValle[1]*maxValle[2]<<'\n';
+    cout << "Suma: " << buscaMinimos() << '\n';
+    cout << "Tres mayores valles:" << maxValle[0] << ',' << maxValle[1] << ',' << maxValle[2] << '\n';
+    cout << "producto:" << maxValle[0] * maxValle[1] * maxValle[2] << '\n';
     return 0;
 }
 // 500
-//970200
+// 970200
