@@ -7,6 +7,7 @@ using namespace std;
 char *all[100];
 char marcados[100][100];
 int counter = 0;
+int maxValle[3];
 int leeDatos()
 {
     ifstream fe("input.txt");
@@ -26,6 +27,39 @@ int leeDatos()
          cout << cadena << '\n';*/
     return counter;
 }
+long compruebaAltura(int x, int y)
+{
+    long misMarcados = 0;
+    // comprobar limites para que no se salgo 0 100
+    marcados[x][y] = 1;
+    if (y < 99 && marcados[x][y + 1] == 0 && all[x][y + 1] != '9' && all[x][y + 1] > all[x][y])
+    {
+        //marcados[x][y] = 1;
+        misMarcados++;
+        misMarcados += compruebaAltura(x, y+1);
+    };
+    if (y > 0 && marcados[x][y - 1] == 0 && all[x][y - 1] != '9' && all[x][y - 1] > all[x][y])
+    {
+        //marcados[x][y] = 1;
+        misMarcados++;
+        misMarcados += compruebaAltura(x, y-1);
+    };
+    if (x < 99 && marcados[x + 1][y] == 0 && all[x + 1][y] != '9' && all[x + 1][y] > all[x][y])
+    {
+        //marcados[x][y] = 1;
+        misMarcados++;
+        misMarcados += compruebaAltura(x + 1, y);
+    };
+    if (x > 0 && marcados[x - 1][y] == 0 && all[x - 1][y] != '9' && all[x - 1][y] > all[x][y])
+    {
+        //marcados[x][y] = 1;
+        misMarcados++;
+        misMarcados += compruebaAltura(x - 1, y);
+    };
+
+    return misMarcados;
+}
+
 long buscaMinimos()
 {
     long suma = 0, suma2 = 0;
@@ -39,13 +73,13 @@ long buscaMinimos()
             cout << all[n + 1] << '\n';*/
         for (int k = 0; k < 100; k++)
         {
-            if ((k==99?1:all[n][k] < all[n][k + 1]) && (k == 0 ? 1 : all[n][k] < all[n][k - 1]) &&
+            /*if ((k==99?1:all[n][k] < all[n][k + 1]) && (k == 0 ? 1 : all[n][k] < all[n][k - 1]) &&
                 (n == counter - 1 ? 1 : all[n][k] < all[n + 1][k]) && (n == 0 ? 1 : all[n][k] < all[n - 1][k]))
             {
 
                 valor2 = all[n][k] - 48 + 1;
                 suma2 += valor2;
-            }
+            }*/
 
             bool min = false;
             if (k > 0) // compara con anterior
@@ -72,60 +106,51 @@ long buscaMinimos()
             valor = all[n][k] - 48 + 1;
             suma += valor;
 
-            if (valor2 != valor)
+            if (1)
             {
-                if (n > 0)
+                long valleSize = 0;
+                valleSize = compruebaAltura(n, k)+1;
+                if(valleSize>maxValle[2])
+                {
+                    maxValle[2]=valleSize;
+                    if(valleSize>maxValle[1])
+                    {
+                        maxValle[2]=maxValle[1];
+                        maxValle[1]=valleSize;
+                        if(valleSize>maxValle[0])
+                        {
+                           maxValle[1]=maxValle[0];
+                        maxValle[0]=valleSize; 
+                        }
+                    }
+                }
+                /*if (n > 0)
                     cout << all[n - 1] << '\n';
                 cout << all[n] << '\n';
                 if (n < counter - 1)
                     cout << all[n + 1] << '\n';
 
                 printf("pos %i,%i minimo %i\n", n, k, valor);
-                printf("2-pos %i,%i minimo %i\n", n, k, valor2);
-                cout << "suma: " << suma << " Suma2:" << suma2 << '\n';
+                // printf("2-pos %i,%i minimo %i\n", n, k, valor2);
+                cout << "suma: " << suma << "Tamaño: " << valleSize << '\n';*/
+                cout<<"tamano: "<<valleSize<<'\n';
                 // suma2=suma;
             }
         }
-        cout << "linea: " << n << " suma: " << suma << " suma2: " << suma2 << '\n';
+        //cout << "linea: " << n << " suma: " << suma << " suma2: " << suma2 << '\n';
     }
 
     return suma;
 };
 
-long compruebaAltura(int x,int y)
-{
-    int misMarcados=0;
-    //comprobar limites para que no se salgo 0 100 
-    if(marcados[x+1][y]==0 && all[x+1][y]!='9' && all[x+1][y]>all[x][y] ) 
-    {
-        misMarcados++;
-        misMarcados+=compruebaAltura(x+1,y);
-    };
-    if(marcados[x-1][y]==0) 
-    {
-        misMarcados++;
-        misMarcados+=compruebaAltura(x-1,y);
-    };
-    if(marcados[x][y+1]==0) 
-    {
-        misMarcados++;
-        misMarcados+=compruebaAltura(x+1,y);
-    };
-    if(marcados[x][y-1]==0) 
-    {
-        misMarcados++;
-        misMarcados+=compruebaAltura(x+1,y);
-    };
- 
-    return misMarcados;
-}
 int main()
 {
     printf("Starting...\n");
     leeDatos();
     buscaMinimos();
-
+    cout<<"Tres mayores valles:"<<maxValle[0]<<','<<maxValle[1]<<','<<maxValle[2]<<'\n';
+    cout<<"producto:"<<maxValle[0]*maxValle[1]*maxValle[2]<<'\n';
     return 0;
 }
 // 500
-//
+//970200
