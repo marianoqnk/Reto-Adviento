@@ -119,6 +119,8 @@ int main()
     for (std::vector<long long>::iterator it=mivector.begin(); it!=mivector.end(); ++it)
     std::cout<<cuenta++<< ' ' << *it<<'\n';
         std::cout << '\n';
+    cout<<" El medio es:" <<incompletas/2+1<<' '<<mivector[incompletas/2];
     return 0;
 }
 // 155067
+//2762335572
