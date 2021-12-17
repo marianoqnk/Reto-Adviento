@@ -3,7 +3,7 @@
         "istream": "cpp",
         "iostream": "cpp",
         "stack": "cpp",
-        "vector": "cpp"
-
+        "vector": "cpp",
+        "array": "cpp"
     }
 }
