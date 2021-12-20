@@ -9,9 +9,9 @@ using namespace std;
 int counter = 0;
 #define FILAS 3
 #define COLUMNAS 3
-#define POSICION(f,c) (c*COLUMNAS+f)
-#define FN(n) (n/COLUMNA)
-#define FC(n) (n%COLUMNA)
+#define POSICION(f, c) ((f)*COLUMNAS + c)
+#define FIL(n) ((n) / COLUMNAS)
+#define COL(n) ((n) % COLUMNAS)
 
 int matriz[3][3]{{1, 2, 3},
                  {4, 5, 6},
@@ -23,34 +23,27 @@ class Rama
 public:
     int to;
     int cost;
-    Rama();
+    // Rama();
 };
 class Node
 {
 public:
-
-    array <Rama,4> misRamas()
+    void print()
     {
-       
-        _misRamas[0].to = fila - 1 * COLUMNAS + columna;
-         _misRamas[0].cost = matriz[fila - 1][columna];
 
-        _misRamas[1].to = fila - 1 * COLUMNAS + columna;
-         _misRamas[1].cost = matriz[fila + 1][columna];
-
-         _misRamas[2].to = fila * COLUMNAS + columna;
-         _misRamas[2].cost = matriz[fila + 1][columna+1];
-
-         _misRamas[3].to = fila * COLUMNAS + columna;
-         _misRamas[3].cost = matriz[fila + 1][columna-1];
-         return _misRamas;
-    }
-    
-private:
-    array <Rama,4> _misRamas;
-    int antecesor=-1;
-    int distanciaOrigen=0;
-    bool visitado=false;
+        cout << "N:" << nodeN << " Visitado:" << visitado << " Do:" << distanciaOrigen << " A:" << antecesor << '\n';
+        cout << "ADJ: ";
+        for (auto rama : _misRamas)
+            if (rama.to >= 0)
+                cout << "T:" << rama.to << " C:" << rama.cost << ' ';
+        cout << '\n';
+    };
+    Node(int n) : nodeN(n){};
+    int nodeN;
+    array<Rama, 4> _misRamas;
+    bool visitado = false;
+    int distanciaOrigen = 0xFFFFFFFF; // muchas distancia
+    int antecesor = -1;
     int peso;
 };
 
@@ -58,13 +51,38 @@ vector<Node *> grafo;
 
 void matrizToGrafo(int filas, int columnas, int *datos)
 {
+    // carga los datos del grafo y fin, no genera matriz de adyacencias porque exite en matriz pero quizás sea mejor crearlas
     int *p = datos;
-    for (int x = 0; x < filas; x++)
-        for (int y = 0; y < columnas; y++)
+    int nodoActual = 0;
+    for (int f = 0; f < filas; f++)
+        for (int c = 0; c < columnas; c++)
         {
-            Node *N = new Node(x, y);
+            Node *N = new Node(nodoActual++);
+            // N->distanciaOrigen = 0xFFFFFFFF;
+            int nrama = 0;
+            // adyacencias
+            if (f > 0)
+            {
+                N->_misRamas[nrama].cost = matriz[f - 1][c];
+                N->_misRamas[nrama++].to = POSICION(f - 1, c);
+            }
+            if (f < filas - 1)
+            {
+                N->_misRamas[nrama].cost = matriz[f + 1][c];
+                N->_misRamas[nrama++].to = POSICION(f + 1, c);
+            }
+            if (c > 0)
+            {
+                N->_misRamas[nrama].cost = matriz[f][c - 1];
+                N->_misRamas[nrama++].to = POSICION(f, c - 1);
+            }
+            if (c < columnas - 1)
+            {
+                N->_misRamas[nrama].cost = matriz[f][c + 1];
+                N->_misRamas[nrama++].to = POSICION(f, c + 1);
+            }
             grafo.push_back(N);
-            cout << *p++ << ',';
+            // cout << *p++ << ',';
         }
     // cout<<grafo[1]->misRamas[0]->to;
 }
@@ -99,6 +117,47 @@ int main()
     /*for (int x=0;x<3;x++)
         for (int y=0;y<3;y++)
             cout<<matriz[x][y]<<',';*/
-    matrizToGrafo(3, 3, (int *)matriz);
+    matrizToGrafo(FILAS, COLUMNAS, (int *)matriz); // crea la matriz
+    for (auto nodo : grafo)
+        nodo->print();
+    grafo[0]->distanciaOrigen = 0;
+    grafo[0]->antecesor = 0;
+    grafo[0]->visitado=true;
+    
+    auto nodoAtual = *grafo[0];
+    bool salir;
+    do
+    {
+        unsigned int minima = 0xFFFF;
+        unsigned int nodoMinima = 0x0;
+
+        /* code */
+        salir = true;
+        for (auto rama :  nodoAtual._misRamas)
+        {
+            if(rama.to<=0)break;
+            Node nodoDestino=*grafo[rama.to];
+            if (nodoDestino.visitado == false)
+            {
+                // calcula coste
+                int coste = nodoAtual.distanciaOrigen + rama.cost;
+                if (coste < nodoDestino.distanciaOrigen || nodoDestino.distanciaOrigen==-1)
+                {
+                    nodoDestino.distanciaOrigen = coste;
+                    nodoDestino.antecesor = nodoAtual.nodeN;
+                    salir = false;
+                };
+                if (coste < minima)
+                {
+                    minima = coste;
+                    nodoMinima = rama.to;
+                };
+                
+            };
+        };
+        nodoAtual=*grafo[nodoMinima];
+        nodoAtual.visitado=true;
+    } while (!salir);
+
     return 0;
 }
