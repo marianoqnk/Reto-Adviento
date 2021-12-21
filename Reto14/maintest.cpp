@@ -5,9 +5,7 @@
 #include <algorithm>
 #include <climits>
 using namespace std;
-int counter = 0;
-char texto[20000];
-char nueva[20000];
+
 // char nuevaBat[10000];
 /*****************************
  *  1 vuelta -> n+n-1= 2n-1
@@ -26,32 +24,15 @@ char nueva[20000];
  KF un KH y un HF. Al hacer la cuenta tengo que restar
  KF->KHF
  */
-long k = 0, f = 0, v = 0, h = 0, s = 0, n = 0, c = 0, p = 0, o = 0;
-struct Sum
-{
-    long k = 0, f = 0, v = 0, h = 0, s = 0, n = 0, c = 0, p = 0, o = 0;
-};
+
 struct Extremos
 {
-	unsigned long long int min, max;
-};
-struct diccionario
-{
-    char palabra[3];
-    char sustitucion;
+    unsigned long long int min, max;
 };
 
-struct Almacen
-{
-    int n;
-    char palabra[3];
-    Sum *su;
-};
-diccionario miDiccionario[100];
-Almacen *almacen[4000];
 unordered_map<string, unsigned long long> cuentaPares;
 unordered_map<string, char> mapeado;
-
+char last;
 int palmacen = 0;
 array<unsigned long, 26> mapa;
 int leeDatos()
@@ -62,11 +43,12 @@ int leeDatos()
     // genera pares
     for (auto n = 0; n < (cadena.length() - 1); n++)
     {
-        auto par = cuentaPares.insert({{cadena[n], cadena[n + 1]}, 1});//devuelve iterador al primer elemento y bool si se ha insertado corectamente
+        auto par = cuentaPares.insert({{cadena[n], cadena[n + 1]}, 1}); // devuelve iterador al primer elemento y bool si se ha insertado corectamente
         if (!par.second)
-            par.first->second++;//ya existe el par y lo que hay que hacer es incrementar
+            par.first->second++; // ya existe el par y lo que hay que hacer es incrementar
     };
     // contar el ultimo
+    last = cadena[cadena.size() - 1];
     getline(fe, cadena);
     while (getline(fe, cadena))
     {
@@ -77,58 +59,63 @@ int leeDatos()
         // cout<<"x:"<<miPoint->x<<"y:"<<miPoint->y<<'\n';
     };
 
-    return counter;
+    return 0;
 }
 
 Extremos cuenta()
 {
-    unordered_map<char,unsigned long long> contadores;
-    for(auto k:cuentaPares)
- {
-     contadores.find(k.first[0])->
-     contadores.insert({'a',1});
- }
+    unsigned long long int min = ULLONG_MAX, max = 0;
+    unordered_map<char, unsigned long long> contadores;
+    for (auto k : cuentaPares)
+    {
+        // busca la primera letra la funcion devuelve un puntero a ella, si está la hacemos igual al valor del par
+        auto p1 = contadores.insert({k.first[0], k.second}); // inserta y si hay error es que ya existe
+        if (!p1.second)                                      // como hay error es que ya existe y entonce sumo
+            p1.first->second += k.second;
+        
+    }
+    auto it_p = contadores.insert({last, 1});
+    if (!it_p.second)
+        it_p.first->second++;
+    for (auto p : contadores)
+    {
+        max = p.second > max ? p.second : max;
+        min = p.second < min ? p.second : min;
+    }
+
+    return {min, max};
 }
 
 void algoritmo()
 {
-    //KF->KVF para el siguiente KV + VF
+    // KF->KVF para el siguiente KV + VF
     auto temp = cuentaPares; // lo hace porque no puedo manipular el mapa mientras lo recorro
- for(auto k:cuentaPares)
- {
-     temp.find(k.first)->second-=k.second; //busca el par y lo resta porque lo va a convertir en 2 pares KF
-     char c = mapeado.find(k.first)->second; //mapa de sustituciones
-		auto p1 = temp.insert({{k.first[0], c}, k.second});//KV
-		auto p2 = temp.insert({{c, k.first[1]}, k.second});//VF
-		if(!p1.second)//si no se ha insertado se crea nuevo
-			p1.first->second += k.second;
-		if(!p2.second)//si no se ha insertado se crea nuevo
-			p2.first->second += k.second;
-}
-cuentaPares=temp;
+    for (auto k : cuentaPares)
+    {
+        temp.find(k.first)->second -= k.second;             // busca el par y lo resta porque lo va a convertir en 2 pares KF
+        char c = mapeado.find(k.first)->second;             // mapa de sustituciones
+        auto p1 = temp.insert({{k.first[0], c}, k.second}); // KV
+        auto p2 = temp.insert({{c, k.first[1]}, k.second}); // VF
+        if (!p1.second)                                     // si no se ha insertado se crea nuevo
+            p1.first->second += k.second;
+        if (!p2.second) // si no se ha insertado se crea nuevo
+            p2.first->second += k.second;
+    }
+    cuentaPares = temp;
 };
 int main()
 {
     leeDatos();
-    algoritmo();
-    /*char binomio[3];
-    binomio[2] = '\0';
-    //char texto[]="KF\0";
-    int l=strlen(texto)-1;
-    for (int x {0}; x < l; x++)
-        {
-            //nueva[pnueva++] = texto[n];
-            binomio[0] = texto[x];
-            binomio[1] = texto[x + 1];
-            //char k = sustituye(binomio);
-            //nueva[pnueva++] = k;
-            explora(10,binomio);
-        }
+    for(size_t i = 0; i < 40; i++)
+		algoritmo();
 
-    cout << k << ',' << f << ',' << v << ',' << h << ',' << s << ',' << n << ',' << c << ',' << p << ',' << o << ',' << '\n';
+	Extremos extr = cuenta();
+
+	std::cout << extr.max - extr.min << std::endl;
+
+    
     // KFVHFSSVNCSNHCPCNPVO*/
     return 0;
 }
 // 2420
-// 2509
 // 1913,3037,1942,1102,1670,2343,1233,1078,3587
